@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bài Tập Toán Về Nhà</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <style>
+        :root {
+            --bg1: #0f172a;
+            /* Slate-900 */
+            --bg2: #111827;
+            /* Gray-900 */
+            --grad1: #60a5fa;
+            /* Sky-400 */
+            --grad2: #a78bfa;
+            /* Violet-400 */
+            --grad3: #34d399;
+            /* Emerald-400 */
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-strong: rgba(255, 255, 255, 0.12);
+            --border: rgba(255, 255, 255, 0.18);
+            --text: #0f172a;
+            --muted: #6b7280;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 25px 60px rgba(0, 0, 0, 0.35);
+            --radius: 18px;
+            --radius-lg: 22px;
+            --duration: 300ms;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        /* Nền hình vuông + gradient + parallax nhẹ */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 24px;
+            color: var(--text);
+            background:
+                radial-gradient(1200px 800px at 10% -10%, rgba(167, 139, 250, 0.25) 0%, transparent 60%),
+                radial-gradient(900px 900px at 110% 10%, rgba(96, 165, 250, 0.22) 0%, transparent 55%),
+                radial-gradient(800px 700px at 50% 120%, rgba(52, 211, 153, 0.18) 0%, transparent 55%),
+                linear-gradient(135deg, var(--bg1), var(--bg2));
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Lưới ô vuông tinh tế */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 38px 38px, 38px 38px;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+        }
+
+        /* Vệt sáng chậm cho chiều sâu */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: -20% -10%;
+            background:
+                radial-gradient(600px 600px at 20% 10%, rgba(96, 165, 250, 0.12), transparent 60%),
+                radial-gradient(700px 700px at 80% 0%, rgba(167, 139, 250, 0.10), transparent 65%);
+            filter: blur(2px);
+            animation: drift 18s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translate3d(0, 0, 0)
+            }
+
+            100% {
+                transform: translate3d(0, -12px, 0)
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            animation: slideIn 700ms ease-out both;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(28px) scale(0.99)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1)
+            }
+        }
+
+        /* Header mềm mắt */
+        .header {
+            position: relative;
+            padding: 28px 30px;
+            text-align: center;
+            background:
+                linear-gradient(135deg, rgba(96, 165, 250, 0.85), rgba(167, 139, 250, 0.85));
+            color: var(--white);
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            inset: -60% -20%;
+            background: conic-gradient(from 0deg, rgba(255, 255, 255, 0.0), rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.0) 70%);
+            filter: blur(30px);
+            animation: sweep 6s linear infinite;
+        }
+
+        @keyframes sweep {
+            to {
+                transform: rotate(1turn)
+            }
+        }
+
+        .header h1 {
+            font-size: 2.35rem;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            text-shadow: 0 6px 22px rgba(0, 0, 0, 0.25);
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 1.05rem;
+            opacity: 0.95;
+        }
+
+        /* Thanh tabs (nav-buttons) – segmented, kính mờ */
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            padding: 18px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.6));
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-button {
+            position: relative;
+            padding: 14px 22px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            cursor: pointer;
+            color: #0b3a69;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.55));
+            box-shadow:
+                0 6px 18px rgba(15, 23, 42, 0.08),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+            transition: transform var(--duration) ease, box-shadow var(--duration) ease, background var(--duration) ease;
+            overflow: hidden;
+        }
+
+        .nav-button::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(96, 165, 250, 0.18), rgba(167, 139, 250, 0.18), rgba(52, 211, 153, 0.18));
+            opacity: 0;
+            transition: opacity var(--duration) ease;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 10px 24px rgba(15, 23, 42, 0.12),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+        }
+
+        .nav-button:hover::before {
+            opacity: 1
+        }
+
+        .nav-button.active {
+            color: #0b1220;
+            background: linear-gradient(135deg, #7cc0ff, #a98cff);
+            border-color: transparent;
+            box-shadow:
+                0 14px 28px rgba(109, 115, 255, 0.35),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+        }
+
+        /* Thanh công cụ (controls) – toolbar mảnh */
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 18px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.75));
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .pdf-info {
+            color: #334155;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pdf-info::before {
+            content: "•";
+            color: #60a5fa;
+            font-weight: 900;
+            filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.8));
+        }
+
+        .fullscreen-btn {
+            padding: 10px 18px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.6));
+            color: #0b3a69;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform var(--duration) ease, box-shadow var(--duration) ease, background var(--duration) ease;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fullscreen-btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -40%;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0));
+            transform: skewX(-18deg);
+            transition: left 600ms ease;
+        }
+
+        .fullscreen-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.12);
+        }
+
+        .fullscreen-btn:hover::after {
+            left: 120%
+        }
+
+        /* Khu vực PDF */
+        .pdf-container {
+            padding: 26px;
+            min-height: 78vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, #f8fafc, #eef2ff);
+        }
+
+        .pdf-viewer {
+            width: 100%;
+            height: 75vh;
+            border: none;
+            border-radius: 16px;
+            background: white;
+            box-shadow:
+                0 22px 48px rgba(2, 6, 23, 0.12),
+                0 0 0 1px rgba(2, 6, 23, 0.05);
+            transition: transform var(--duration) ease, box-shadow var(--duration) ease, opacity var(--duration) ease;
+        }
+
+        .pdf-viewer:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 28px 64px rgba(2, 6, 23, 0.16),
+                0 0 0 1px rgba(2, 6, 23, 0.06);
+        }
+
+        /* Loading đẹp hơn */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 75vh;
+            color: #475569;
+            gap: 12px;
+        }
+
+        .spinner {
+            width: 54px;
+            height: 54px;
+            border: 4px solid rgba(148, 163, 184, 0.25);
+            border-top: 4px solid #7cc0ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite, glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(1turn)
+            }
+        }
+
+        @keyframes glow {
+            0% {
+                box-shadow: 0 0 0 rgba(124, 192, 255, 0)
+            }
+
+            100% {
+                box-shadow: 0 0 20px rgba(124, 192, 255, 0.55)
+            }
+        }
+
+        /* Thông báo */
+        .error-message {
+            text-align: center;
+            color: #e74c3c;
+            font-size: 1.05rem;
+            padding: 36px;
+            background: rgba(231, 76, 60, 0.08);
+            border: 1px solid rgba(231, 76, 60, 0.25);
+            border-radius: 14px;
+            margin: 20px;
+        }
+
+        /* Info panel */
+        .info-panel {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            padding: 20px;
+            margin: 18px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 28px rgba(252, 182, 159, 0.28);
+        }
+
+        .info-panel h3 {
+            color: #b23b2a;
+            margin-bottom: 8px;
+            font-size: 1.18rem
+        }
+
+        .info-panel p {
+            color: #636e72;
+            line-height: 1.6
+        }
+
+        /* Fullscreen overlay & controls đẹp hơn */
+        .fullscreen-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 9999;
+            display: none;
+            animation: fadeIn 250ms ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        .fullscreen-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden
+        }
+
+        .fullscreen-pdf {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white
+        }
+
+        .fullscreen-controls {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 10px;
+            z-index: 10000;
+        }
+
+        .control-btn {
+            width: 46px;
+            height: 46px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.12));
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: transform var(--duration) ease, background var(--duration) ease, box-shadow var(--duration) ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-1px) scale(1.05);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.15));
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.9rem
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                gap: 10px;
+                padding: 14px
+            }
+
+            .nav-button {
+                width: 100%;
+                text-align: center
+            }
+
+            .pdf-container {
+                padding: 14px
+            }
+
+            .pdf-viewer {
+                height: 62vh
+            }
+
+            .controls {
+                padding: 10px 14px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🥴 Bài tập về nhà cô Mai giao</h1>
+            </p>💀 Hủy diệt khối nghỉ hè.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-button active" onclick="switchPDF('chapter1')">
+                📐 Chương 1: Biểu Thức Đại Số
+            </button>
+            <button class="nav-button" onclick="switchPDF('chapter2')">
+                🔶 Chương 2: Các Hình Khối Trong Thực Tiễn
+            </button>
+        </div>
+
+        <div class="controls">
+            <div class="pdf-info">
+                <span id="currentChapterName">📐 Chương 1: Biểu Thức Đại Số</span>
+            </div>
+            <button class="fullscreen-btn" onclick="toggleFullscreen()">
+                🔍 Xem Toàn Màn Hình (Full Screen)
+            </button>
+        </div>
+
+        <div class="pdf-container">
+            <div id="loadingDiv" class="loading" style="display:none;">
+                <div class="spinner"></div>
+                <p>Đang tải tài liệu...</p>
+            </div>
+
+            <iframe id="pdfViewer" class="pdf-viewer" src="CHƯƠNG 1-BIỂU THỨC ĐẠI SỐ.pdf" onload="hideLoading()"
+                onerror="showError()">
+            </iframe>
+        </div>
+
+        <div class="info-panel">
+            <h3>🔄 Hướng dẫn sử dụng</h3>
+            <p>Nhấp vào các nút ở trên để chuyển đổi giữa bài tập số và hình. Sử dụng nút "Xem Toàn Màn Hình" để xem PDF
+                ở chế
+                độ full screen. Nhấn ESC hoặc nút X để thoát chế độ toàn màn hình.</p>
+        </div>
+    </div>
+
+    <!-- Fullscreen Overlay -->
+    <div id="fullscreenOverlay" class="fullscreen-overlay">
+        <div class="fullscreen-container">
+            <div class="fullscreen-controls">
+                <button class="control-btn" onclick="switchPDFFullscreen('chapter1')" title="Chương 1">1</button>
+                <button class="control-btn" onclick="switchPDFFullscreen('chapter2')" title="Chương 2">2</button>
+                <button class="control-btn" onclick="toggleFullscreen()" title="Thoát toàn màn hình">✕</button>
+            </div>
+            <iframe id="fullscreenPDF" class="fullscreen-pdf" src=""></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Tên các file PDF - Dễ dàng thay đổi tại đây
+        const pdfFiles = {
+            chapter1: "CHƯƠNG 1-BIỂU THỨC ĐẠI SỐ.pdf",
+            chapter2: "CHƯƠNG 2-CÁC HÌNH KHỐI TRONG THỰC TIỄN.pdf"
+        };
+
+        const chapterNames = {
+            chapter1: "📐 Chương 1: Biểu Thức Đại Số",
+            chapter2: "🔶 Chương 2: Các Hình Khối Trong Thực Tiễn"
+        };
+
+        let currentPDF = 'chapter1';
+        let isFullscreen = false;
+
+        function switchPDF(chapter) {
+            // Hiển thị loading
+            showLoading();
+
+            // Cập nhật active button
+            document.querySelectorAll('.nav-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Cập nhật thông tin chapter
+            document.getElementById('currentChapterName').textContent = chapterNames[chapter];
+
+            // Thay đổi PDF
+            const pdfViewer = document.getElementById('pdfViewer');
+            pdfViewer.src = pdfFiles[chapter];
+            currentPDF = chapter;
+
+            // Hiệu ứng mượt
+            pdfViewer.style.opacity = '0';
+            setTimeout(() => { pdfViewer.style.opacity = '1'; }, 300);
+        }
+
+        function switchPDFFullscreen(chapter) {
+            const fullscreenPDF = document.getElementById('fullscreenPDF');
+            fullscreenPDF.src = pdfFiles[chapter];
+            currentPDF = chapter;
+
+            // Cập nhật PDF chính
+            const pdfViewer = document.getElementById('pdfViewer');
+            pdfViewer.src = pdfFiles[chapter];
+
+            // Cập nhật active button
+            document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+            const buttons = document.querySelectorAll('.nav-button');
+            if (chapter === 'chapter1') buttons[0].classList.add('active');
+            else if (chapter === 'chapter2') buttons[1].classList.add('active');
+
+            // Cập nhật thông tin chapter
+            document.getElementById('currentChapterName').textContent = chapterNames[chapter];
+        }
+
+        function toggleFullscreen() {
+            const overlay = document.getElementById('fullscreenOverlay');
+            const fullscreenPDF = document.getElementById('fullscreenPDF');
+
+            if (!isFullscreen) {
+                overlay.style.display = 'flex';
+                fullscreenPDF.src = pdfFiles[currentPDF];
+                isFullscreen = true;
+                document.body.style.overflow = 'hidden';
+                setTimeout(() => { overlay.style.opacity = '1'; }, 10);
+            } else {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    fullscreenPDF.src = '';
+                    isFullscreen = false;
+                    document.body.style.overflow = 'auto';
+                }, 300);
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('loadingDiv').style.display = 'flex';
+            document.getElementById('pdfViewer').style.display = 'none';
+        }
+        function hideLoading() {
+            document.getElementById('loadingDiv').style.display = 'none';
+            document.getElementById('pdfViewer').style.display = 'block';
+        }
+
+        function showError() {
+            document.getElementById('loadingDiv').style.display = 'none';
+            const container = document.querySelector('.pdf-container');
+            container.innerHTML = `
+                <div class="error-message">
+                    <h3>⚠️ Không thể tải file PDF</h3>
+                    <p>Vui lòng kiểm tra:</p>
+                    <ul style="text-align: left; margin-top: 15px;">
+                        <li>File PDF có tồn tại trong cùng thư mục với file HTML này</li>
+                        <li>Tên file có đúng không (phân biệt chữ hoa/thường)</li>
+                        <li>Trình duyệt có hỗ trợ xem PDF không</li>
+                    </ul>
+                    <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #74b9ff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        🔄 Thử lại
+                    </button>
+                </div>
+            `;
+        }
+
+        // Hiệu ứng loading ban đầu
+        window.addEventListener('load', () => setTimeout(hideLoading, 900));
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function (e) {
+            if (e.key === '1') {
+                if (isFullscreen) switchPDFFullscreen('chapter1');
+                else switchPDF('chapter1');
+            } else if (e.key === '2') {
+                if (isFullscreen) switchPDFFullscreen('chapter2');
+                else switchPDF('chapter2');
+            } else if (e.key === 'Escape' && isFullscreen) {
+                toggleFullscreen();
+            } else if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            }
+        });
+
+        // Chỉ đóng fullscreen khi nhấn nút X
+        document.getElementById('fullscreenOverlay').addEventListener('click', function (e) {
+            if (e.target.classList.contains('control-btn') && e.target.textContent === '✕') {
+                toggleFullscreen();
+            }
+        });
+    </script>
+</body>
+
+</html>
